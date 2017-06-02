@@ -25,7 +25,7 @@ public class GalBlot extends BaseRichBolt implements Serializable {
 
     @Override
     public void execute(Tuple input) {
-        String temp = input.getString(0);
+        Long temp = input.getLong(0);
         Logging.info("GalBlot.execute: "+temp);
         this.collector.ack(input);
         try {
