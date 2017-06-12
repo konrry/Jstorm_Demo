@@ -4,6 +4,7 @@ import backtype.storm.Config;
 import backtype.storm.StormSubmitter;
 import backtype.storm.generated.AlreadyAliveException;
 import backtype.storm.generated.InvalidTopologyException;
+import backtype.storm.generated.StormTopology;
 import backtype.storm.topology.TopologyBuilder;
 import net.galvin.jstorm.demo.utils.Logging;
 
@@ -24,13 +25,16 @@ public class GalTopology implements ITopology {
 
     private void doStart() throws AlreadyAliveException, InvalidTopologyException {
         TopologyBuilder builder = new TopologyBuilder();
+
         builder.setSpout("testspout", new GalSplout(), 1);
-        builder.setBolt("testbolt", new GalBlot(), 2).shuffleGrouping("testspout");
+        builder.setBolt("testboltA", new GalBlot(), 1).shuffleGrouping("testspout");
+        builder.setBolt("testboltB", new GalBlot(), 1).shuffleGrouping("testspout");
 
-        Config conf = new Config();
-        conf.setNumAckers(1);
-
-        StormSubmitter.submitTopology("testtopology", conf, builder.createTopology());
+        Config configonf = new Config();
+        configonf.setNumAckers(1);
+        configonf.setNumWorkers(10);
+        StormTopology stormTopology = builder.createTopology();
+        StormSubmitter.submitTopology("testtopology", configonf, stormTopology);
         Logging.info("storm cluster will start");
     }
 

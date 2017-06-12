@@ -42,7 +42,9 @@ public class GalSplout extends BaseRichSpout implements Serializable {
 
     @Override
     public void nextTuple() {
-        for(int count=0;count < 10;count++){
+
+        while(true){
+            if(atomicLong.get() > 100000) atomicLong.set(0l);
             Long a = atomicLong.incrementAndGet();
             Logging.info("GalSplout.nextTuple: "+a);
             this.collector.emit(new Values(a));
