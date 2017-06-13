@@ -1,4 +1,4 @@
-package net.galvin.jstorm.demo.utils;
+package net.galvin.jstorm.utils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,4 +17,5 @@ public class Logging {
     public static void error(String info){
         LOGGER.error(info);
     }
+
 }

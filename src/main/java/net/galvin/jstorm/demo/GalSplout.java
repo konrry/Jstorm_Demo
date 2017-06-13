@@ -2,14 +2,13 @@ package net.galvin.jstorm.demo;
 
 import backtype.storm.spout.SpoutOutputCollector;
 import backtype.storm.task.TopologyContext;
-import backtype.storm.topology.IRichSpout;
 import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.topology.base.BaseRichSpout;
 import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Values;
-import net.galvin.jstorm.demo.utils.Logging;
+import net.galvin.jstorm.utils.Logging;
+import net.galvin.jstorm.utils.Utils;
 
-import java.io.Serializable;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -27,9 +26,7 @@ import java.util.concurrent.atomic.AtomicLong;
      declareOutputFields， 定义spout发送数据，每个字段的含义
      getComponentConfiguration 获取本spout的component 配置
  */
-public class GalSplout extends BaseRichSpout implements Serializable {
-
-    private static final long serialVersionUID = 1576248436296314425L;
+public class GalSplout extends BaseRichSpout {
 
     private SpoutOutputCollector collector;
     AtomicLong atomicLong = new AtomicLong(0L);
@@ -42,18 +39,11 @@ public class GalSplout extends BaseRichSpout implements Serializable {
 
     @Override
     public void nextTuple() {
-
-        while(true){
-            if(atomicLong.get() > 100000) atomicLong.set(0l);
-            Long a = atomicLong.incrementAndGet();
-            Logging.info("GalSplout.nextTuple: "+a);
-            this.collector.emit(new Values(a));
-            try {
-                Thread.sleep(10000l);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+        if(atomicLong.get() > 100000) atomicLong.set(0l);
+        Long a = atomicLong.incrementAndGet();
+        Logging.info("GalSplout.nextTuple: "+a);
+        this.collector.emit(new Values(a));
+        Utils.sleep(5000l);
     }
 
     @Override
