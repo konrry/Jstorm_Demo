@@ -1,6 +1,6 @@
 package net.galvin.jstorm.demo;
 
-import net.galvin.jstorm.utils.Logging;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Created by Administrator on 2017/6/2.
@@ -8,10 +8,12 @@ import net.galvin.jstorm.utils.Logging;
 public class GalLaunch {
 
     public static void main(String[] args) {
-//        String path = args[0];
-//        Logging.info("path:"+path);
+        String topologyName = "topoabc";
+        if(args != null && args.length > 0 && StringUtils.isNotEmpty(args[0])){
+            topologyName = args[0];
+        }
         ITopology iTopology = new GalTopology();
-        iTopology.start();
+        iTopology.start(topologyName);
     }
 
 }

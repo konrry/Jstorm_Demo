@@ -18,4 +18,12 @@ public class Logging {
         LOGGER.error(info);
     }
 
+    public static void error(Throwable e){
+        LOGGER.error(Utils.formatException(e));
+    }
+
+    public static void info(Throwable e){
+        LOGGER.info(Utils.formatException(e));
+    }
+
 }

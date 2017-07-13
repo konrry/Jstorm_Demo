@@ -7,6 +7,7 @@ import backtype.storm.topology.base.BaseRichBolt;
 import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
 import net.galvin.jstorm.utils.Logging;
+import net.galvin.jstorm.utils.Msg;
 
 import java.util.Map;
 
@@ -30,10 +31,10 @@ public class GalSubBlot extends BaseRichBolt {
 
     @Override
     public void execute(Tuple input) {
-        Long temp = input.getLong(0);
-        Logging.info("GalSubBlot.execute: "+temp);
-//        collector.emit(new Values(temp));
-//        this.collector.emit(String.valueOf(temp % 3),new Values(temp));
+        Msg msg = (Msg) input.getValue(0);
+        Fields fields = input.getFields();
+        String field = fields.get(0);
+        Logging.info("GalSubBlot.execute  msg: "+msg+", field: "+field);
         this.collector.ack(input);
     }
 

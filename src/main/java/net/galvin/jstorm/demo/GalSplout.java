@@ -7,6 +7,7 @@ import backtype.storm.topology.base.BaseRichSpout;
 import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Values;
 import net.galvin.jstorm.utils.Logging;
+import net.galvin.jstorm.utils.Msg;
 import net.galvin.jstorm.utils.Utils;
 
 import java.util.Map;
@@ -29,7 +30,6 @@ import java.util.concurrent.atomic.AtomicLong;
 public class GalSplout extends BaseRichSpout {
 
     private SpoutOutputCollector collector;
-    AtomicLong atomicLong = new AtomicLong(0L);
 
     @Override
     public void open(Map conf, TopologyContext context, SpoutOutputCollector collector) {
@@ -39,25 +39,24 @@ public class GalSplout extends BaseRichSpout {
 
     @Override
     public void nextTuple() {
-        if(atomicLong.get() > 100000) atomicLong.set(0l);
-        Long a = atomicLong.incrementAndGet();
-        Logging.info("GalSplout.nextTuple: "+a);
-        this.collector.emit(new Values(a));
+        Msg msg = Msg.Builder.get();
+        Logging.info("GalSplout.nextTuple: "+msg);
+        this.collector.emit(new Values(msg),msg.getId());
         Utils.sleep(5000l);
     }
 
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
-        declarer.declare(new Fields("GAL_DEMO"));
+        declarer.declare(new Fields("MSG"));
     }
 
     @Override
     public void ack(Object msgId) {
-        super.ack(msgId);
+        Logging.info("GalSplout.ack: "+msgId);
     }
 
     @Override
     public void fail(Object msgId) {
-        super.fail(msgId);
+        Logging.info("GalSplout.fail: "+msgId);
     }
 }

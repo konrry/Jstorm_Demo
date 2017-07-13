@@ -5,6 +5,6 @@ package net.galvin.jstorm.demo;
  */
 public interface ITopology {
 
-    void start();
+    void start(String topologyName);
 
 }
