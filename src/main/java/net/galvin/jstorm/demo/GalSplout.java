@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicLong;
      activate 是当task被激活时，触发的动作
      deactivate 是task被deactive时，触发的动作
      nextTuple 是spout实现核心， nextuple完成自己的逻辑，即每一次取消息后，用collector 将消息emit出去。
-     strategy， 当spout收到一条ack消息时，触发的动作，详情可以参考 ack机制
+     demo1， 当spout收到一条ack消息时，触发的动作，详情可以参考 ack机制
      fail， 当spout收到一条fail消息时，触发的动作，详情可以参考 ack机制
      declareOutputFields， 定义spout发送数据，每个字段的含义
      getComponentConfiguration 获取本spout的component 配置
@@ -52,7 +52,7 @@ public class GalSplout extends BaseRichSpout {
 
     @Override
     public void ack(Object msgId) {
-        Logging.info("GalSplout.strategy: "+msgId);
+        Logging.info("GalSplout.demo1: "+msgId);
     }
 
     @Override

@@ -38,7 +38,7 @@ public class GalTopology implements ITopology {
         config.setNumWorkers(5);
         StormTopology stormTopology = builder.createTopology();
         StormSubmitter.submitTopology(topologyName, config, stormTopology);
-        Logging.info("storm cluster will start");
+        Logging.info("Jstorm cluster will start");
 
     }
 
