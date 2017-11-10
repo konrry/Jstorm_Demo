@@ -1,4 +1,5 @@
-package net.galvin.jstorm.demo;
+package net.galvin.jstorm;
+
 
 /**
  * Created by Administrator on 2017/6/2.

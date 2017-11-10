@@ -26,7 +26,6 @@ public class Utils {
         /**
          * UID = JSTROM + yyyyMMddHHmmssSSS + RANDOM_CHAR + IP + NUM
          */
-
         private static volatile AtomicLong atomicLong = new AtomicLong(0l);
         private static final String[] RANDOM_CHAR_ARR = {
                 "A","B","C","D","E","F","G",
@@ -60,7 +59,7 @@ public class Utils {
             StringBuilder idBuilder = new StringBuilder("JSTROM").append("_");
             idBuilder.append(new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date())).append("_");
             Random random = new Random();
-            for(int i=0;i<8;i++){
+            for(int i = 0; i < 8; i++){
                 idBuilder.append(RANDOM_CHAR_ARR[random.nextInt(RANDOM_CHAR_ARR.length-1)]);
             }
             idBuilder.append("_").append(IP());
@@ -73,6 +72,14 @@ public class Utils {
     public static String formatException(Throwable throwable){
         if(throwable == null) return null;
         return throwable.getMessage();
+    }
+
+    public static final String DEFAULT_PATTERN = "yyyy-MM-dd HH:mm:ss.SSS";
+    public static String format(Date date){
+        if(date == null){
+            date = new Date();
+        }
+        return new SimpleDateFormat(DEFAULT_PATTERN).format(date);
     }
 
 }

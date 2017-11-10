@@ -1,4 +1,4 @@
-package net.galvin.jstorm.demo;
+package net.galvin.jstorm.strategy;
 
 import backtype.storm.spout.SpoutOutputCollector;
 import backtype.storm.task.TopologyContext;
@@ -8,10 +8,8 @@ import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Values;
 import net.galvin.jstorm.utils.Logging;
 import net.galvin.jstorm.utils.Msg;
-import net.galvin.jstorm.utils.Utils;
 
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  *   spout对象必须是继承Serializable， 因此要求spout内所有数据结构必须是可序列化的
@@ -27,36 +25,40 @@ import java.util.concurrent.atomic.AtomicLong;
      declareOutputFields， 定义spout发送数据，每个字段的含义
      getComponentConfiguration 获取本spout的component 配置
  */
-public class GalSplout extends BaseRichSpout {
+public class StrategySplout extends BaseRichSpout {
 
     private SpoutOutputCollector collector;
 
     @Override
     public void open(Map conf, TopologyContext context, SpoutOutputCollector collector) {
-        Logging.info("GalSplout.open");
+        Logging.info("StrategySplout.open");
         this.collector = collector;
     }
 
     @Override
     public void nextTuple() {
-        Msg msg = Msg.Builder.get();
-        Logging.info("GalSplout.nextTuple: "+msg);
-        this.collector.emit(new Values(msg),msg.getId());
-        Utils.sleep(5000l);
+        ComCalData comCalData = new ComCalData(1,1, ComCalData.OBJECT_TYPE.PROD_PRODUCT);
+        Logging.info("StrategySplout.nextTuple: "+comCalData);
+        this.collector.emit(new Values(comCalData),comCalData.getId());
+        try {
+            Thread.sleep(1000l);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
-        declarer.declare(new Fields("MSG"));
+        declarer.declare(new Fields("comCalData"));
     }
 
     @Override
     public void ack(Object msgId) {
-        Logging.info("GalSplout.strategy: "+msgId);
+        Logging.info("StrategySplout.strategy: "+msgId);
     }
 
     @Override
     public void fail(Object msgId) {
-        Logging.info("GalSplout.fail: "+msgId);
+        Logging.info("StrategySplout.fail: "+msgId);
     }
 }
