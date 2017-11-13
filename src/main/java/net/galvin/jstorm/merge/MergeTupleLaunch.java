@@ -1,4 +1,4 @@
-package net.galvin.jstorm.split;
+package net.galvin.jstorm.merge;
 
 import backtype.storm.Config;
 import backtype.storm.StormSubmitter;
@@ -22,19 +22,16 @@ import net.galvin.jstorm.utils.Utils;
 
 import java.util.Map;
 
-/**
- * 不同的tuple发送给多个blot
- */
-public class DiffTupleLaunch {
+public class MergeTupleLaunch {
 
 
     public static void main(String[] args) {
-        DiffTopology iTopology = new DiffTopology();
-        iTopology.start("DiffTopology");
+        MergeTopology iTopology = new MergeTopology();
+        iTopology.start("MergeTopology");
 
     }
 
-    private static class DiffTopology implements ITopology{
+    private static class MergeTopology implements ITopology{
 
         @Override
         public void start(String topologyName) {
@@ -45,15 +42,30 @@ public class DiffTupleLaunch {
             }
         }
 
-
         private void doStart(String topologyName) throws AlreadyAliveException, InvalidTopologyException {
 
             TopologyBuilder builder = new TopologyBuilder();
-            builder.setSpout("DiffSpout", new DiffSpout(), 1);
-            builder.setBolt("DiffBlot", new DiffBlot(), 1).shuffleGrouping("DiffSpout");
-            builder.setBolt("DiffSubBlotA", new DiffSubBlot(), 1).shuffleGrouping("DiffBlot", STREAM_ID.ONE.name());
-            builder.setBolt("DiffSubBlotB", new DiffSubBlot(), 1).shuffleGrouping("DiffBlot", STREAM_ID.TWO.name());
-            builder.setBolt("DiffSubBlotC", new DiffSubBlot(), 1).shuffleGrouping("DiffBlot", STREAM_ID.THREE.name());
+            builder.setSpout("MergeSpout", new MergeSpout(), 1);
+            builder.setBolt("MergeBlot", new MergeBlot(), 1).shuffleGrouping("MergeSpout");
+
+            builder.setBolt("MergeSubBlotA", new MergeSubBlot(STREAM_ID.ONE.name()), 1)
+                    .shuffleGrouping("MergeBlot", STREAM_ID.ONE.name());
+            builder.setBolt("MergeSubBlotB", new MergeSubBlot(STREAM_ID.TWO.name()), 1)
+                    .shuffleGrouping("MergeBlot", STREAM_ID.TWO.name());
+            builder.setBolt("MergeSubBlotC", new MergeSubBlot(STREAM_ID.THREE.name()), 1)
+                    .shuffleGrouping("MergeBlot", STREAM_ID.THREE.name());
+
+            builder.setBolt("MergeTerminalBlot", new MergeTerminalBlot(), 1)
+                    .shuffleGrouping("MergeSubBlotA", STREAM_ID.ONE.name())
+                    .shuffleGrouping("MergeSubBlotB", STREAM_ID.TWO.name())
+                    .shuffleGrouping("MergeSubBlotC", STREAM_ID.THREE.name());
+
+//            builder.setBolt("MergeTerminalBlotA", new MergeTerminalBlot(), 1)
+//                    .shuffleGrouping("MergeSubBlotA", STREAM_ID.ONE.name());
+//            builder.setBolt("MergeTerminalBlotB", new MergeTerminalBlot(), 1)
+//                    .shuffleGrouping("MergeSubBlotB", STREAM_ID.TWO.name());
+//            builder.setBolt("MergeTerminalBlotC", new MergeTerminalBlot(), 1)
+//                    .shuffleGrouping("MergeSubBlotC", STREAM_ID.THREE.name());
 
             Config config = new Config();
             config.setNumAckers(3);
@@ -66,7 +78,7 @@ public class DiffTupleLaunch {
 
     }
 
-    private static class DiffSpout extends BaseRichSpout {
+    private static class MergeSpout extends BaseRichSpout {
 
         private SpoutOutputCollector collector;
 
@@ -78,7 +90,7 @@ public class DiffTupleLaunch {
         @Override
         public void nextTuple() {
             Msg msg = Msg.Builder.get();
-            Logging.info("DiffSpout.nextTuple: "+msg);
+            Logging.info("MergeSpout.nextTuple: "+msg);
             this.collector.emit(new Values(msg),msg.getId());
             Utils.sleep(10000l);
         }
@@ -90,17 +102,17 @@ public class DiffTupleLaunch {
 
         @Override
         public void ack(Object msgId) {
-            Logging.info("DiffSpout.ack: "+msgId);
+            Logging.info("MergeSpout.ack: "+msgId);
         }
 
         @Override
         public void fail(Object msgId) {
-            Logging.info("DiffSpout.fail: "+msgId);
+            Logging.info("MergeSpout.fail: "+msgId);
         }
     }
 
 
-    private static class DiffBlot extends BaseRichBolt {
+    private static class MergeBlot extends BaseRichBolt {
 
         private OutputCollector collector;
 
@@ -114,7 +126,7 @@ public class DiffTupleLaunch {
             Msg msg = (Msg) input.getValue(0);
             Fields fields = input.getFields();
             String field = fields.get(0);
-            Logging.info("DiffBlot.execute  msg: "+msg+", field: "+field);
+            Logging.info("MergeBlot.execute  msg: "+msg+", field: "+field);
 
             String data = (String) msg.getData();
             String[] dataArr = data.split("=");
@@ -127,13 +139,45 @@ public class DiffTupleLaunch {
 
         @Override
         public void declareOutputFields(OutputFieldsDeclarer declarer) {
-            declarer.declareStream(STREAM_ID.ONE.name(), new Fields("MSG", "DIFF_ONE"));
-            declarer.declareStream(STREAM_ID.TWO.name(), new Fields("MSG", "DIFF_TWO"));
-            declarer.declareStream(STREAM_ID.THREE.name(), new Fields("MSG", "DIFF_THREE"));
+            declarer.declareStream(STREAM_ID.ONE.name(), new Fields("MERGE_ONE"));
+            declarer.declareStream(STREAM_ID.TWO.name(), new Fields("MERGE_TWO"));
+            declarer.declareStream(STREAM_ID.THREE.name(), new Fields("MERGE_THREE"));
         }
     }
 
-    private static class DiffSubBlot extends BaseRichBolt {
+    private static class MergeSubBlot extends BaseRichBolt {
+
+        private OutputCollector collector;
+        private String streamId;
+
+        public MergeSubBlot(String streamId) {
+            this.streamId = streamId;
+        }
+
+        @Override
+        public void prepare(Map stormConf, TopologyContext context, OutputCollector collector) {
+            this.collector = collector;
+        }
+
+        @Override
+        public void execute(Tuple input) {
+            Msg msg = (Msg) input.getValue(0);
+            String streamId = input.getSourceStreamId();
+            Fields fields = input.getFields();
+            String field = fields.get(0);
+            Logging.info("MergeSubBlot.execute streamId: "+streamId+"  msg: "+msg+", field: "+field);
+            this.collector.emit(this.streamId, new Values(msg));
+            this.collector.ack(input);
+        }
+
+        @Override
+        public void declareOutputFields(OutputFieldsDeclarer declarer) {
+            declarer.declareStream(streamId, new Fields("DATA"));
+        }
+
+    }
+
+    private static class MergeTerminalBlot extends BaseRichBolt {
 
         private OutputCollector collector;
 
@@ -148,13 +192,13 @@ public class DiffTupleLaunch {
             String streamId = input.getSourceStreamId();
             Fields fields = input.getFields();
             String field = fields.get(0);
-            Logging.info("DiffSubBlot.execute streamId: "+streamId+"  msg: "+msg+", field: "+field);
+            Logging.info("MergeTerminalBlot.execute streamId: "+streamId+"  msg: "+msg+", field: "+field);
             this.collector.ack(input);
         }
 
         @Override
         public void declareOutputFields(OutputFieldsDeclarer declarer) {
-            declarer.declare(new Fields("SAME_SUB_DEMO"));
+
         }
     }
 
@@ -162,5 +206,4 @@ public class DiffTupleLaunch {
     private enum STREAM_ID {
         ONE,TWO,THREE;
     }
-
 }

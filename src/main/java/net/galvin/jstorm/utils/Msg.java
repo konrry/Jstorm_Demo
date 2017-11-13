@@ -46,7 +46,11 @@ public class Msg {
 
     public static class Builder{
 
-        private static Object[] dataArr = {"0","1","2"};
+        private static Object[] dataArr = {
+                "AAAAAAAAAAAA=BBBBBBBBBBBB=CCCCCCCCCCCC",
+                "666666666666=777777777777=888888888888",
+                "############=@@@@@@@@@@@@=&&&&&&&&&&&&"
+        };
         private static Random random = new Random();
         public static Msg get(){
             Msg msg = new Msg(dataArr[random.nextInt(100)%3]);

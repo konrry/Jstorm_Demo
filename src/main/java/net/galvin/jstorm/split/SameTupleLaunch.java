@@ -80,7 +80,7 @@ public class SameTupleLaunch {
             Msg msg = Msg.Builder.get();
             Logging.info("SameSpout.nextTuple: "+msg);
             this.collector.emit(new Values(msg),msg.getId());
-            Utils.sleep(5000l);
+            Utils.sleep(10000l);
         }
 
         @Override
@@ -90,7 +90,7 @@ public class SameTupleLaunch {
 
         @Override
         public void ack(Object msgId) {
-            Logging.info("SameSpout.demo1: "+msgId);
+            Logging.info("SameSpout.ack: "+msgId);
         }
 
         @Override
