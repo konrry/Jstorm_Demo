@@ -60,13 +60,6 @@ public class MergeTupleLaunch {
                     .shuffleGrouping("MergeSubBlotB", STREAM_ID.TWO.name())
                     .shuffleGrouping("MergeSubBlotC", STREAM_ID.THREE.name());
 
-//            builder.setBolt("MergeTerminalBlotA", new MergeTerminalBlot(), 1)
-//                    .shuffleGrouping("MergeSubBlotA", STREAM_ID.ONE.name());
-//            builder.setBolt("MergeTerminalBlotB", new MergeTerminalBlot(), 1)
-//                    .shuffleGrouping("MergeSubBlotB", STREAM_ID.TWO.name());
-//            builder.setBolt("MergeTerminalBlotC", new MergeTerminalBlot(), 1)
-//                    .shuffleGrouping("MergeSubBlotC", STREAM_ID.THREE.name());
-
             Config config = new Config();
             config.setNumAckers(3);
             config.setNumWorkers(5);
