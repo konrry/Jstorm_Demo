@@ -64,34 +64,6 @@ public class CalcuSingleSuppGoodsSaleImpl implements CalcuSuppGoodsSaleService {
      * 更新商品可售状态
      */
     private void checkSuppGoodsSaleFlag(SuppGoods suppGoods, boolean saleFlag, boolean msgFlag, SuppGoodsCallBack suppGoodsCallBack) throws Exception {
-//        IsBuyLog isBuyLog = new IsBuyLog();
-//        isBuyLog.setEffectTime(System.currentTimeMillis());
-//        Logging.info("checkSuppGoodsSaleFlag，ID："+suppGoods.getSuppGoodsId()+",saleFlag："+saleFlag+"，msgFlag："+msgFlag);
-//        if(saleFlag){
-//            try {
-//                GoodsLog goodsLog = new GoodsLog();
-//                goodsLog.setGoodsId(suppGoods.getSuppGoodsId());
-//                goodsLog.setLogDate(new Date());
-//                goodsLog.setCategoryId(suppGoods.getCategoryId());
-//                if (goodsLogService.getCountNums(goodsLog) < 1) {
-//                    goodsLogService.saveLog(goodsLog);
-//                }
-//            } catch (Exception e1) {
-//                Logging.info(e1 + "insert buyflag oracle log failed" + suppGoods.getSuppGoodsId());
-//            }
-//        }else {
-//            try {
-//                GoodsLog goodsLog = new GoodsLog();
-//                goodsLog.setGoodsId(suppGoods.getSuppGoodsId());
-//                goodsLog.setLogDate(new Date());
-//                goodsLog.setCategoryId(suppGoods.getCategoryId());
-//                if (goodsnLogService.getCountNums(goodsLog) < 1) {
-//                    goodsnLogService.saveLog(goodsLog);
-//                }
-//            } catch (Exception e1) {
-//                Logging.INFO(e1 + "insert buyflag oracle log failed" + suppGoods.getSuppGoodsId());
-//            }
-//        }
         String strSaleFlag = saleFlag ? Constant.Y_FLAG : Constant.N_FLAG;
         Logging.info("准备发送消息，ID："+suppGoods.getSuppGoodsId()+",strSaleFlag："+strSaleFlag+"，msgFlag："+msgFlag);
         if(!suppGoods.getOnlineFlag().equalsIgnoreCase(strSaleFlag)){
