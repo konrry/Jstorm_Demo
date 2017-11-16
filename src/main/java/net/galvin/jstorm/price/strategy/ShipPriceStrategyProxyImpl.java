@@ -9,8 +9,12 @@ import net.galvin.jstorm.price.strategy.callback.ProdProductCallBack;
 import net.galvin.jstorm.price.strategy.callback.ProductBranchCallBack;
 import net.galvin.jstorm.price.strategy.callback.SuppGoodsCallBack;
 import net.galvin.jstorm.utils.Logging;
+import org.springframework.stereotype.Service;
+
 import java.util.List;
 
+
+@Service("shipPriceStrategyProxy")
 public class ShipPriceStrategyProxyImpl extends AbstractPriceStrategyEngine {
 
     /**
