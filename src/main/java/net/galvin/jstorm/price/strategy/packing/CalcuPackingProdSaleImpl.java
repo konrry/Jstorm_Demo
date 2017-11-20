@@ -6,10 +6,12 @@ import net.galvin.jstorm.price.strategy.callback.PackingProductCallBack;
 import net.galvin.jstorm.price.strategy.service.CalcuPackingProdSaleService;
 import net.galvin.jstorm.price.utils.Constant;
 import net.galvin.jstorm.utils.Logging;
+import org.springframework.stereotype.Service;
 
 /**
  * 组合产品(自主打包和供应商打包)可售计算
  */
+@Service
 public class CalcuPackingProdSaleImpl implements CalcuPackingProdSaleService {
 
     @Override

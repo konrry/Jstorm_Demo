@@ -6,12 +6,18 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class PriceLaunch {
 
+    private final static String[] TOPOLOGY_LAUNCH_ARR = new String[]{
+            "shipTopologyLaunch", "visaTopologyLaunch"
+    };
+
     public static void main(String[] args) throws Exception {
         ClassPathXmlApplicationContext classPathXmlApplicationContext =
                 new ClassPathXmlApplicationContext("applicationContext-lvmama-price-beans.xml");
         BeanFactory beanFactory = classPathXmlApplicationContext.getBeanFactory();
-        ITopologyLaunch shipTopologyLaunch = (ITopologyLaunch) beanFactory.getBean("shipTopologyLaunch");
-        shipTopologyLaunch.start();
+        for (String topologyLaunch : TOPOLOGY_LAUNCH_ARR) {
+            ITopologyLaunch shipTopologyLaunch = (ITopologyLaunch) beanFactory.getBean(topologyLaunch);
+            shipTopologyLaunch.start();
+        }
     }
 
 }

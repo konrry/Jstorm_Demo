@@ -6,10 +6,12 @@ import net.galvin.jstorm.price.strategy.callback.SuppGoodsCallBack;
 import net.galvin.jstorm.price.strategy.service.CalcuSuppGoodsSaleService;
 import net.galvin.jstorm.price.utils.Constant;
 import net.galvin.jstorm.utils.Logging;
+import org.springframework.stereotype.Service;
 
 /**
  * 商品(单品)可售计算
  */
+@Service
 public class CalcuSingleSuppGoodsSaleImpl implements CalcuSuppGoodsSaleService {
 
     @Override

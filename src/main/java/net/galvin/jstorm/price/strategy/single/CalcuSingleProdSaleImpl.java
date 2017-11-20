@@ -11,12 +11,14 @@ import net.galvin.jstorm.price.strategy.service.CalcuProdSaleService;
 import net.galvin.jstorm.price.utils.Constant;
 import net.galvin.jstorm.utils.Logging;
 import org.apache.commons.collections.CollectionUtils;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 /**
  * 产品(单品)可售计算
  */
+@Service
 public class CalcuSingleProdSaleImpl implements CalcuProdSaleService {
 
     private CalcuProdBranchSaleService calcuSingleProdBranchSale;
