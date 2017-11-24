@@ -46,8 +46,7 @@ public class EmailCounterTupleLaunch {
             TopologyBuilder builder = new TopologyBuilder();
             builder.setSpout("CommitFeedSpout", new CommitFeedSpout());
             builder.setBolt("EmailExtractorBlot", new EmailExtractorBlot(), 1).shuffleGrouping("CommitFeedSpout");
-            builder.setBolt("EmailCounterBlot", new EmailCounterBlot())
-                    .fieldsGrouping("EmailExtractorBlot", new Fields("email"));
+            builder.setBolt("EmailCounterBlot", new EmailCounterBlot()).fieldsGrouping("EmailExtractorBlot", new Fields("email"));
 
             Config config = new Config();
             StormTopology stormTopology = builder.createTopology();
@@ -82,7 +81,7 @@ public class EmailCounterTupleLaunch {
         @Override
         public void nextTuple() {
             for (String tempStr : emailArr) {
-                Logging.info("BookSpout.nextTuple: "+ tempStr);
+                Logging.info("CommitFeedSpout.nextTuple: "+ tempStr);
                 this.collector.emit(new Values(tempStr));
             }
             Utils.sleep(30000l);
@@ -141,7 +140,7 @@ public class EmailCounterTupleLaunch {
 
         private void printCounts(){
             for (String email : counts.keySet()){
-                System.out.println(String.format("%s has count of $s", email, counts.get(email)));
+                Logging.info(String.format("%s has count of $s", email, counts.get(email)));
             }
         }
 
