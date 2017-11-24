@@ -140,7 +140,7 @@ public class EmailCounterTupleLaunch {
 
         private void printCounts(){
             for (String email : counts.keySet()){
-                Logging.info(String.format("%s has count of $s", email, counts.get(email)));
+                Logging.info(String.format("%s has count of %s", email, counts.get(email)));
             }
         }
 
